@@ -29,7 +29,12 @@
 /* Custom scrollbar and smooth highlights */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px;
   background-color: #FFFDF5;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
 }
 
 ::-webkit-scrollbar {

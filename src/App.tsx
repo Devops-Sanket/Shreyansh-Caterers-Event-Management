@@ -85,6 +85,24 @@ export default function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close mobile navigation menu on touch/click outside navbar
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const handleOutsideInteraction = (event: MouseEvent | TouchEvent) => {
+      const nav = document.getElementById("navbar-widget");
+      if (nav && !nav.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideInteraction);
+    document.addEventListener("touchstart", handleOutsideInteraction, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideInteraction);
+      document.removeEventListener("touchstart", handleOutsideInteraction);
+    };
+  }, [isMobileMenuOpen]);
+
   // Form Submit Action (Generates customized WhatsApp redirection or locally saves)
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,27 +131,37 @@ export default function App() {
     e?: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>,
     sectionId?: string
   ) => {
+    // 1. Explicitly close the mobile menu immediately
+    setIsMobileMenuOpen(false);
+
     if (e && e.preventDefault) {
       e.preventDefault();
     }
 
-    // Explicitly and immediately close the mobile navigation menu
-    setIsMobileMenuOpen(false);
-
     if (!sectionId) return;
 
-    // Trigger smooth scroll reliably across all mobile browsers
+    // 2. Perform smooth scroll across every smartphone model (Samsung, Redmi, Infinix, iPhone)
     const targetElement = document.getElementById(sectionId);
     if (targetElement) {
       const navElement = document.getElementById("navbar-widget");
       const navOffset = navElement ? navElement.offsetHeight : 70;
-      const elementPosition = targetElement.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop);
-      const targetScroll = Math.max(0, elementPosition - navOffset - 12);
+      const bodyTop = document.body.getBoundingClientRect().top;
+      const elementTop = targetElement.getBoundingClientRect().top;
+      const targetScroll = Math.max(0, elementTop - bodyTop - navOffset - 10);
 
       window.scrollTo({
         top: targetScroll,
         behavior: "smooth",
       });
+
+      // Update URL hash cleanly
+      try {
+        if (window.history && window.history.pushState) {
+          window.history.pushState(null, "", `#${sectionId}`);
+        }
+      } catch {
+        // Safe for iframe
+      }
     }
   };
 
@@ -268,83 +296,76 @@ export default function App() {
 
         {/* Mobile menu expanded state panels */}
         {isMobileMenuOpen && (
-          <>
-            {/* Backdrop overlay to close menu when tapping outside */}
-            <div
-              className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40 lg:hidden"
-              onClick={() => setIsMobileMenuOpen(false)}
-              aria-hidden="true"
-            />
-            <div
-              id="mobile-navigation-drawer"
-              className="lg:hidden absolute top-full left-0 right-0 bg-[#FFFDF5] border-t border-[#C5A059]/30 px-6 py-5 space-y-4 shadow-2xl overflow-y-auto max-h-[82vh] z-50 animate-in fade-in slide-in-from-top-2 duration-150"
-            >
-              <div className="flex flex-col gap-1 font-semibold text-sm text-[#1F2937]">
-                <button
-                  type="button"
-                  onClick={(e) => navigateToSection(e, "about-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
-                >
-                  <span className="font-medium text-slate-800 pointer-events-none">About Us</span>
-                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => navigateToSection(e, "specialties-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
-                >
-                  <span className="font-medium text-slate-800 pointer-events-none">Traditional Specialties</span>
-                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => navigateToSection(e, "services-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
-                >
-                  <span className="font-medium text-slate-800 pointer-events-none">Catering Packages</span>
-                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => navigateToSection(e, "estimator-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 text-saffron-600 cursor-pointer select-none text-left w-full transition-colors"
-                >
-                  <span className="font-medium text-[#F27D26] pointer-events-none">Interactive Buffet Planner</span>
-                  <ChevronRight className="h-4 w-4 text-saffron-400 pointer-events-none" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => navigateToSection(e, "showcase-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
-                >
-                  <span className="font-medium text-slate-800 pointer-events-none">Wedding Stages</span>
-                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => navigateToSection(e, "gallery-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
-                >
-                  <span className="font-medium text-slate-800 pointer-events-none">Photographs Gallery</span>
-                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => navigateToSection(e, "testimonials-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
-                >
-                  <span className="font-medium text-slate-800 pointer-events-none">Client Reviews</span>
-                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => navigateToSection(e, "contact-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 cursor-pointer select-none text-left w-full transition-colors"
-                >
-                  <span className="font-medium text-slate-800 pointer-events-none">Contact Details</span>
-                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </button>
-              </div>
+          <div
+            id="mobile-navigation-drawer"
+            className="lg:hidden absolute top-full left-0 right-0 bg-[#FFFDF5] border-t border-[#C5A059]/30 px-6 py-5 space-y-4 shadow-2xl overflow-y-auto max-h-[82vh] z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+          >
+            <div className="flex flex-col gap-1 font-semibold text-sm text-[#1F2937]">
+              <a
+                href="#about-section"
+                onClick={(e) => navigateToSection(e, "about-section")}
+                className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors block"
+              >
+                <span className="font-medium text-slate-800 pointer-events-none">About Us</span>
+                <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
+              </a>
+              <a
+                href="#specialties-section"
+                onClick={(e) => navigateToSection(e, "specialties-section")}
+                className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors block"
+              >
+                <span className="font-medium text-slate-800 pointer-events-none">Traditional Specialties</span>
+                <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
+              </a>
+              <a
+                href="#services-section"
+                onClick={(e) => navigateToSection(e, "services-section")}
+                className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors block"
+              >
+                <span className="font-medium text-slate-800 pointer-events-none">Catering Packages</span>
+                <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
+              </a>
+              <a
+                href="#estimator-section"
+                onClick={(e) => navigateToSection(e, "estimator-section")}
+                className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 text-saffron-600 cursor-pointer select-none text-left w-full transition-colors block"
+              >
+                <span className="font-medium text-[#F27D26] pointer-events-none">Interactive Buffet Planner</span>
+                <ChevronRight className="h-4 w-4 text-saffron-400 pointer-events-none" />
+              </a>
+              <a
+                href="#showcase-section"
+                onClick={(e) => navigateToSection(e, "showcase-section")}
+                className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors block"
+              >
+                <span className="font-medium text-slate-800 pointer-events-none">Wedding Stages</span>
+                <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
+              </a>
+              <a
+                href="#gallery-section"
+                onClick={(e) => navigateToSection(e, "gallery-section")}
+                className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors block"
+              >
+                <span className="font-medium text-slate-800 pointer-events-none">Photographs Gallery</span>
+                <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
+              </a>
+              <a
+                href="#testimonials-section"
+                onClick={(e) => navigateToSection(e, "testimonials-section")}
+                className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors block"
+              >
+                <span className="font-medium text-slate-800 pointer-events-none">Client Reviews</span>
+                <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
+              </a>
+              <a
+                href="#contact-section"
+                onClick={(e) => navigateToSection(e, "contact-section")}
+                className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 cursor-pointer select-none text-left w-full transition-colors block"
+              >
+                <span className="font-medium text-slate-800 pointer-events-none">Contact Details</span>
+                <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
+              </a>
+            </div>
 
               <div className="grid grid-cols-2 gap-3 pt-3 border-t border-stone-200/80">
                 <a
@@ -365,7 +386,6 @@ export default function App() {
                 </a>
               </div>
             </div>
-          </>
         )}
       </nav>
 
