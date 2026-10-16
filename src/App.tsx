@@ -217,9 +217,9 @@ export default function App() {
             : "bg-[#FFFDF5]/90 backdrop-blur-md py-4 border-b border-[#C5A059]/25"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center gap-4">
           {/* Logo Brand with Indian Motifs */}
-          <a href="#hero-section" className="flex items-center gap-2.5 group">
+          <a href="#hero-section" className="flex items-center gap-2.5 group shrink-0">
             <div className="h-10 w-10 md:h-11 md:w-11 rounded-full bg-[#1F2937] flex items-center justify-center text-white shadow-md relative overflow-hidden group-hover:scale-105 transition-transform">
               <Utensils className="h-5 w-5 text-[#C5A059]" />
               <div className="absolute inset-0 border border-[#C5A059]/20 rounded-full scale-90" />
@@ -235,33 +235,62 @@ export default function App() {
           </a>
 
           {/* Desktop Navigation list */}
-          <div className="hidden lg:flex items-center gap-8 text-[13px] font-bold text-slate-700 tracking-wide">
+          <div className="hidden lg:flex items-center gap-3.5 xl:gap-5 2xl:gap-6 text-[13px] font-semibold text-slate-700 tracking-normal shrink-0">
             <a
               href="#about-section"
-              className="hover:text-saffron-600 transition-colors leading-5"
-              style={{
-                paddingLeft: "16px",
-                marginLeft: "34px",
-                marginTop: "0px",
-                marginRight: "5px",
-              }}
+              className="hover:text-saffron-600 transition-colors leading-5 py-1 px-0.5 whitespace-nowrap"
             >
               About Us
             </a>
-            <a href="#specialties-section" className="hover:text-saffron-600 transition-colors leading-5">Our Specialties</a>
-            <a href="#services-section" className="hover:text-saffron-600 transition-colors leading-5">Services</a>
-            <a href="#estimator-section" className="hover:text-saffron-600 transition-colors leading-5 text-[#b55512]">Custom Planner</a>
-            <a href="#showcase-section" className="hover:text-saffron-600 transition-colors leading-5">Wedding Decor</a>
-            <a href="#gallery-section" className="hover:text-saffron-600 transition-colors leading-5">Gallery</a>
-            <a href="#testimonials-section" className="hover:text-saffron-600 transition-colors leading-5">Reviews</a>
-            <a href="#contact-section" className="hover:text-saffron-600 transition-colors leading-5">Contact</a>
+            <a
+              href="#specialties-section"
+              className="hover:text-saffron-600 transition-colors leading-5 py-1 px-0.5 whitespace-nowrap"
+            >
+              Our Specialties
+            </a>
+            <a
+              href="#services-section"
+              className="hover:text-saffron-600 transition-colors leading-5 py-1 px-0.5 whitespace-nowrap"
+            >
+              Services
+            </a>
+            <a
+              href="#estimator-section"
+              className="hover:text-saffron-600 transition-colors leading-5 text-saffron-700 font-bold py-1 px-0.5 whitespace-nowrap"
+            >
+              Custom Planner
+            </a>
+            <a
+              href="#showcase-section"
+              className="hover:text-saffron-600 transition-colors leading-5 py-1 px-0.5 whitespace-nowrap"
+            >
+              Wedding Decor
+            </a>
+            <a
+              href="#gallery-section"
+              className="hover:text-saffron-600 transition-colors leading-5 py-1 px-0.5 whitespace-nowrap"
+            >
+              Gallery
+            </a>
+            <a
+              href="#testimonials-section"
+              className="hover:text-saffron-600 transition-colors leading-5 py-1 px-0.5 whitespace-nowrap"
+            >
+              Reviews
+            </a>
+            <a
+              href="#contact-section"
+              className="hover:text-saffron-600 transition-colors leading-5 py-1 px-0.5 whitespace-nowrap"
+            >
+              Contact
+            </a>
           </div>
 
           {/* Call to Activity CTAs */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2.5 shrink-0 ml-3 xl:ml-5">
             <a
               href="#estimator-section"
-              className="py-2.5 px-4 rounded-xl border border-saffron-500 text-saffron-600 text-xs font-bold hover:bg-saffron-550 hover:bg-saffron-500 hover:text-white transition-all shadow-sm"
+              className="py-2 px-3.5 rounded-xl border border-saffron-500 text-saffron-600 text-xs font-bold hover:bg-saffron-500 hover:text-white transition-all shadow-sm whitespace-nowrap"
             >
               Plan Menu
             </a>
@@ -269,7 +298,7 @@ export default function App() {
               href="https://wa.me/918511071957"
               target="_blank"
               rel="noopener noreferrer"
-              className="py-2.5 px-4 rounded-xl bg-gradient-to-r from-saffron-500 to-gold-500 text-white text-xs font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all font-sans"
+              className="py-2 px-3.5 rounded-xl bg-gradient-to-r from-saffron-500 to-gold-500 text-white text-xs font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all font-sans whitespace-nowrap"
             >
               Book Catering
             </a>
