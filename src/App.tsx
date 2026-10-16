@@ -206,7 +206,7 @@ export default function App() {
       {/* 4. Elegant Sticky Header Navigation with Professional Polish */}
       <nav
         id="navbar-widget"
-        className={`sticky top-0 w-full transition-all duration-300 z-40 ${
+        className={`sticky top-0 w-full transition-all duration-300 z-50 ${
           isScrolled
             ? "glass-polish shadow-md py-3"
             : "bg-[#FFFDF5]/90 backdrop-blur-md py-4 border-b border-[#C5A059]/25"
@@ -272,91 +272,101 @@ export default function App() {
 
           {/* Mobile Hamburg menu click triggers */}
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMobileMenuOpen((prev) => !prev);
+            }}
             id="mobile-menu-trigger"
             aria-label="Toggle Navigation Menu"
-            className="lg:hidden p-2 text-slate-700 hover:text-saffron-600 hover:bg-cream-100 rounded-lg transition-colors"
+            className="lg:hidden p-2 text-slate-700 hover:text-saffron-600 hover:bg-cream-100 rounded-lg transition-colors cursor-pointer select-none active:scale-95"
           >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6 text-slate-900 pointer-events-none" />
+            ) : (
+              <Menu className="h-6 w-6 text-slate-900 pointer-events-none" />
+            )}
           </button>
         </div>
 
         {/* Mobile menu expanded state panels */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
+        {isMobileMenuOpen && (
+          <>
+            {/* Backdrop overlay to close menu when tapping outside */}
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40 lg:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
+            <div
               id="mobile-navigation-drawer"
-              className="lg:hidden absolute top-full left-0 right-0 bg-[#FFFDF5]/95 backdrop-blur-xl border-t border-[#C5A059]/30 px-6 py-5 space-y-4 shadow-2xl overflow-y-auto max-h-[82vh] z-50"
+              className="lg:hidden absolute top-full left-0 right-0 bg-[#FFFDF5] border-t border-[#C5A059]/30 px-6 py-5 space-y-4 shadow-2xl overflow-y-auto max-h-[82vh] z-50 animate-in fade-in slide-in-from-top-2 duration-150"
             >
-              <div className="flex flex-col gap-1.5 font-semibold text-sm text-[#1F2937]">
-                <a
-                  href="#about-section"
+              <div className="flex flex-col gap-1 font-semibold text-sm text-[#1F2937]">
+                <button
+                  type="button"
                   onClick={(e) => navigateToSection(e, "about-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
                 >
                   <span className="font-medium text-slate-800 pointer-events-none">About Us</span>
                   <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </a>
-                <a
-                  href="#specialties-section"
+                </button>
+                <button
+                  type="button"
                   onClick={(e) => navigateToSection(e, "specialties-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
                 >
                   <span className="font-medium text-slate-800 pointer-events-none">Traditional Specialties</span>
                   <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </a>
-                <a
-                  href="#services-section"
+                </button>
+                <button
+                  type="button"
                   onClick={(e) => navigateToSection(e, "services-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
                 >
                   <span className="font-medium text-slate-800 pointer-events-none">Catering Packages</span>
                   <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </a>
-                <a
-                  href="#estimator-section"
+                </button>
+                <button
+                  type="button"
                   onClick={(e) => navigateToSection(e, "estimator-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 text-saffron-600 cursor-pointer select-none"
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 text-saffron-600 cursor-pointer select-none text-left w-full transition-colors"
                 >
                   <span className="font-medium text-[#F27D26] pointer-events-none">Interactive Buffet Planner</span>
                   <ChevronRight className="h-4 w-4 text-saffron-400 pointer-events-none" />
-                </a>
-                <a
-                  href="#showcase-section"
+                </button>
+                <button
+                  type="button"
                   onClick={(e) => navigateToSection(e, "showcase-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
                 >
                   <span className="font-medium text-slate-800 pointer-events-none">Wedding Stages</span>
                   <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </a>
-                <a
-                  href="#gallery-section"
+                </button>
+                <button
+                  type="button"
                   onClick={(e) => navigateToSection(e, "gallery-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
                 >
                   <span className="font-medium text-slate-800 pointer-events-none">Photographs Gallery</span>
                   <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </a>
-                <a
-                  href="#testimonials-section"
+                </button>
+                <button
+                  type="button"
                   onClick={(e) => navigateToSection(e, "testimonials-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 border-b border-stone-200/60 cursor-pointer select-none text-left w-full transition-colors"
                 >
                   <span className="font-medium text-slate-800 pointer-events-none">Client Reviews</span>
                   <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </a>
-                <a
-                  href="#contact-section"
+                </button>
+                <button
+                  type="button"
                   onClick={(e) => navigateToSection(e, "contact-section")}
-                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 cursor-pointer select-none"
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2.5 cursor-pointer select-none text-left w-full transition-colors"
                 >
                   <span className="font-medium text-slate-800 pointer-events-none">Contact Details</span>
                   <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
-                </a>
+                </button>
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-3 border-t border-stone-200/80">
@@ -377,9 +387,9 @@ export default function App() {
                   <span>WhatsApp</span>
                 </a>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </>
+        )}
       </nav>
 
       {/* 5. HERO SECTION */}

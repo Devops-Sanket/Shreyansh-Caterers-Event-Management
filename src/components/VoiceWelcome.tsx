@@ -154,11 +154,11 @@ export default function VoiceWelcome() {
         </button>
       </div>
 
-      {/* Greeting Toast shown in top right corner */}
+      {/* Greeting Toast shown in top right corner (desktop only to prevent mobile nav overlay) */}
       {showToast && (
         <div 
           id="audio-intro-toast"
-          className="fixed top-24 right-4 md:right-8 z-40 max-w-sm w-80 md:w-96 p-4 rounded-xl shadow-xl bg-white border border-[#fbe6ba]/80 overflow-hidden transform transition-all duration-300 hover:shadow-2xl hover:border-saffron-200"
+          className="hidden md:block fixed top-24 right-4 md:right-8 z-30 max-w-sm w-80 md:w-96 p-4 rounded-xl shadow-xl bg-white border border-[#fbe6ba]/80 overflow-hidden transform transition-all duration-300 hover:shadow-2xl hover:border-saffron-200"
         >
           {/* Saffron side line decoration */}
           <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-saffron-500 to-gold-500" />
