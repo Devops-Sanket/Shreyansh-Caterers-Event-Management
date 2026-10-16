@@ -113,9 +113,8 @@ export default function App() {
     e?: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>,
     sectionId?: string
   ) => {
-    if (e) {
+    if (e && e.preventDefault) {
       e.preventDefault();
-      e.stopPropagation();
     }
 
     // Explicitly and immediately close the mobile navigation menu
@@ -123,41 +122,19 @@ export default function App() {
 
     if (!sectionId) return;
 
-    const performScroll = () => {
-      const el = document.getElementById(sectionId);
-      if (el) {
-        const navEl = document.getElementById("navbar-widget");
-        const navHeight = navEl ? navEl.offsetHeight : 70;
-        const rect = el.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const targetY = Math.max(0, rect.top + scrollTop - navHeight - 12);
+    // Trigger smooth scroll reliably across all mobile browsers
+    const targetElement = document.getElementById(sectionId);
+    if (targetElement) {
+      const navElement = document.getElementById("navbar-widget");
+      const navOffset = navElement ? navElement.offsetHeight : 70;
+      const elementPosition = targetElement.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop);
+      const targetScroll = Math.max(0, elementPosition - navOffset - 12);
 
-        window.scrollTo({
-          top: targetY,
-          behavior: "smooth",
-        });
-
-        // Secondary native scroll fallback for strict mobile browser engines
-        try {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        } catch {
-          // ignore fallback error
-        }
-
-        if (window.history && window.history.pushState) {
-          window.history.pushState(null, "", `#${sectionId}`);
-        }
-      }
-    };
-
-    // Execute synchronously to maintain user interaction context on mobile
-    performScroll();
-
-    // Re-trigger across animation and layout cycles to ensure precise arrival
-    requestAnimationFrame(performScroll);
-    setTimeout(performScroll, 80);
-    setTimeout(performScroll, 200);
-    setTimeout(performScroll, 350);
+      window.scrollTo({
+        top: targetScroll,
+        behavior: "smooth",
+      });
+    }
   };
 
   const categories = ["All", "Cuisines", "Decoration", "Catering"];
