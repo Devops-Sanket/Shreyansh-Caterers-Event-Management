@@ -108,6 +108,58 @@ export default function App() {
     }, 1200);
   };
 
+  // Smooth scroll navigation handler for mobile navigation drawer & desktop
+  const navigateToSection = (
+    e?: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>,
+    sectionId?: string
+  ) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // Explicitly and immediately close the mobile navigation menu
+    setIsMobileMenuOpen(false);
+
+    if (!sectionId) return;
+
+    const performScroll = () => {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        const navEl = document.getElementById("navbar-widget");
+        const navHeight = navEl ? navEl.offsetHeight : 70;
+        const rect = el.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const targetY = Math.max(0, rect.top + scrollTop - navHeight - 12);
+
+        window.scrollTo({
+          top: targetY,
+          behavior: "smooth",
+        });
+
+        // Secondary native scroll fallback for strict mobile browser engines
+        try {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        } catch {
+          // ignore fallback error
+        }
+
+        if (window.history && window.history.pushState) {
+          window.history.pushState(null, "", `#${sectionId}`);
+        }
+      }
+    };
+
+    // Execute synchronously to maintain user interaction context on mobile
+    performScroll();
+
+    // Re-trigger across animation and layout cycles to ensure precise arrival
+    requestAnimationFrame(performScroll);
+    setTimeout(performScroll, 80);
+    setTimeout(performScroll, 200);
+    setTimeout(performScroll, 350);
+  };
+
   const categories = ["All", "Cuisines", "Decoration", "Catering"];
   
   const filteredGallery = activeGalleryFilter === "All"
@@ -179,13 +231,24 @@ export default function App() {
 
           {/* Desktop Navigation list */}
           <div className="hidden lg:flex items-center gap-8 text-[13px] font-bold text-slate-700 tracking-wide">
-            <a href="#about-section" className="hover:text-saffron-600 transition-colors leading-5">About Us</a>
+            <a
+              href="#about-section"
+              className="hover:text-saffron-600 transition-colors leading-5"
+              style={{
+                paddingLeft: "16px",
+                marginLeft: "34px",
+                marginTop: "0px",
+                marginRight: "5px",
+              }}
+            >
+              About Us
+            </a>
             <a href="#specialties-section" className="hover:text-saffron-600 transition-colors leading-5">Our Specialties</a>
             <a href="#services-section" className="hover:text-saffron-600 transition-colors leading-5">Services</a>
             <a href="#estimator-section" className="hover:text-saffron-600 transition-colors leading-5 text-[#b55512]">Custom Planner</a>
             <a href="#showcase-section" className="hover:text-saffron-600 transition-colors leading-5">Wedding Decor</a>
             <a href="#gallery-section" className="hover:text-saffron-600 transition-colors leading-5">Gallery</a>
-            <a href="# отзывы-testimonials" className="hover:text-saffron-600 transition-colors leading-5">Reviews</a>
+            <a href="#testimonials-section" className="hover:text-saffron-600 transition-colors leading-5">Reviews</a>
             <a href="#contact-section" className="hover:text-saffron-600 transition-colors leading-5">Contact</a>
           </div>
 
@@ -227,48 +290,91 @@ export default function App() {
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25 }}
               id="mobile-navigation-drawer"
-              className="lg:hidden bg-[#FAF9F5] border-t border-[#fbe6ba]/45 px-6 py-4 space-y-3.5 shadow-xl overflow-hidden"
+              className="lg:hidden absolute top-full left-0 right-0 bg-[#FFFDF5]/95 backdrop-blur-xl border-t border-[#C5A059]/30 px-6 py-5 space-y-4 shadow-2xl overflow-y-auto max-h-[82vh] z-50"
             >
-              <div className="flex flex-col gap-3 font-semibold text-sm text-[#1F2937]">
-                <a href="#about-section" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-saffron-500 flex items-center justify-between py-1.5 border-b border-stone-100">
-                  <span>About Us</span> <ChevronRight className="h-4 w-4 text-stone-300" />
+              <div className="flex flex-col gap-1.5 font-semibold text-sm text-[#1F2937]">
+                <a
+                  href="#about-section"
+                  onClick={(e) => navigateToSection(e, "about-section")}
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                >
+                  <span className="font-medium text-slate-800 pointer-events-none">About Us</span>
+                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
                 </a>
-                <a href="#specialties-section" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-saffron-500 flex items-center justify-between py-1.5 border-b border-stone-100">
-                  <span>Traditional Specialties</span> <ChevronRight className="h-4 w-4 text-stone-300" />
+                <a
+                  href="#specialties-section"
+                  onClick={(e) => navigateToSection(e, "specialties-section")}
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                >
+                  <span className="font-medium text-slate-800 pointer-events-none">Traditional Specialties</span>
+                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
                 </a>
-                <a href="#services-section" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-saffron-500 flex items-center justify-between py-1.5 border-b border-stone-100">
-                  <span>Catering Packages</span> <ChevronRight className="h-4 w-4 text-stone-300" />
+                <a
+                  href="#services-section"
+                  onClick={(e) => navigateToSection(e, "services-section")}
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                >
+                  <span className="font-medium text-slate-800 pointer-events-none">Catering Packages</span>
+                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
                 </a>
-                <a href="#estimator-section" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-saffron-500 flex items-center justify-between py-1.5 border-b border-stone-100 text-saffron-600">
-                  <span>Interactive Buffet Planner</span> <ChevronRight className="h-4 w-4 text-saffron-300" />
+                <a
+                  href="#estimator-section"
+                  onClick={(e) => navigateToSection(e, "estimator-section")}
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 text-saffron-600 cursor-pointer select-none"
+                >
+                  <span className="font-medium text-[#F27D26] pointer-events-none">Interactive Buffet Planner</span>
+                  <ChevronRight className="h-4 w-4 text-saffron-400 pointer-events-none" />
                 </a>
-                <a href="#showcase-section" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-saffron-500 flex items-center justify-between py-1.5 border-b border-stone-100">
-                  <span>Wedding Stages</span> <ChevronRight className="h-4 w-4 text-stone-300" />
+                <a
+                  href="#showcase-section"
+                  onClick={(e) => navigateToSection(e, "showcase-section")}
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                >
+                  <span className="font-medium text-slate-800 pointer-events-none">Wedding Stages</span>
+                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
                 </a>
-                <a href="#gallery-section" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-saffron-500 flex items-center justify-between py-1.5 border-b border-stone-100">
-                  <span>Photographs Gallery</span> <ChevronRight className="h-4 w-4 text-stone-300" />
+                <a
+                  href="#gallery-section"
+                  onClick={(e) => navigateToSection(e, "gallery-section")}
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                >
+                  <span className="font-medium text-slate-800 pointer-events-none">Photographs Gallery</span>
+                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
                 </a>
-                <a href="#contact-section" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-saffron-500 flex items-center justify-between py-1.5">
-                  <span>Contact Details</span> <ChevronRight className="h-4 w-4 text-stone-300" />
+                <a
+                  href="#testimonials-section"
+                  onClick={(e) => navigateToSection(e, "testimonials-section")}
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 border-b border-stone-200/60 cursor-pointer select-none"
+                >
+                  <span className="font-medium text-slate-800 pointer-events-none">Client Reviews</span>
+                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
+                </a>
+                <a
+                  href="#contact-section"
+                  onClick={(e) => navigateToSection(e, "contact-section")}
+                  className="hover:text-saffron-500 active:text-saffron-600 flex items-center justify-between py-2 cursor-pointer select-none"
+                >
+                  <span className="font-medium text-slate-800 pointer-events-none">Contact Details</span>
+                  <ChevronRight className="h-4 w-4 text-stone-300 pointer-events-none" />
                 </a>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 pt-4 border-t border-stone-100">
+              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-stone-200/80">
                 <a
                   href="tel:+918511071957"
-                  className="py-3 px-4 rounded-xl border border-stone-300 hover:bg-stone-50 text-slate-800 text-xs font-bold text-center flex items-center justify-center gap-1"
+                  className="py-3 px-4 rounded-xl border border-stone-300 hover:bg-stone-50 text-slate-800 text-xs font-bold text-center flex items-center justify-center gap-1.5"
                 >
-                  <Phone className="h-3 w-3" />
+                  <Phone className="h-3.5 w-3.5 text-[#F27D26]" />
                   <span>Call Shreyansh</span>
                 </a>
                 <a
                   href="https://wa.me/918511071957"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-3 px-4 rounded-xl bg-saffron-500 text-white text-xs font-bold text-center flex items-center justify-center gap-1 shadow-md"
+                  className="py-3 px-4 rounded-xl bg-[#F27D26] text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 shadow-md active:opacity-90"
                 >
-                  <MessageSquare className="h-3 w-3" />
-                  <span>Catering WhatsApp</span>
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  <span>WhatsApp</span>
                 </a>
               </div>
             </motion.div>
@@ -964,7 +1070,7 @@ export default function App() {
 
       {/* 13. TESTIMONIALS SECTION (Indian client ratings) */}
       <section
-        id=" отзывы-testimonials"
+        id="testimonials-section"
         className="py-16 md:py-24 bg-cream-luxury/60 border-t border-cream-200"
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-12">
